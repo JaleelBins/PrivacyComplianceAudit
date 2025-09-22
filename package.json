@@ -1,0 +1,27 @@
+{
+  "name": "privacy-compliance-audit",
+  "version": "1.0.0",
+  "description": "Privacy Compliance Audit Platform with FHE Technology",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static build - no build process required'",
+    "start": "npx http-server . -p 3000 -c-1 --cors",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "privacy",
+    "compliance",
+    "audit",
+    "fhe",
+    "blockchain",
+    "ethereum",
+    "web3"
+  ],
+  "author": "Privacy Compliance Team",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
