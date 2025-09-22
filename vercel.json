@@ -1,6 +1,10 @@
 {
-  "version": 2,
-  "name": "privacy-compliance-audit-zama-fhevm",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -27,7 +31,5 @@
         }
       ]
     }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
