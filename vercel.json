@@ -1,18 +1,6 @@
 {
   "version": 2,
-  "name": "privacy-compliance-audit",
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
+  "name": "privacy-compliance-audit-zama-fhevm",
   "headers": [
     {
       "source": "/(.*)",
@@ -35,9 +23,11 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.ethers.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.eth.link https://*.infura.io https://*.alchemy.com wss://*.infura.io wss://*.alchemy.com; img-src 'self' data: https:;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://sepolia.infura.io https://rpc.sepolia.org; style-src 'self' 'unsafe-inline'; connect-src 'self' https://sepolia.infura.io https://rpc.sepolia.org https://sepolia.etherscan.io; img-src 'self' data: https:;"
         }
       ]
     }
-  ]
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
