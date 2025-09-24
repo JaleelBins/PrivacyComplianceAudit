@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Compliance Audit Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.0/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #4c51bf;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #4c51bf;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4c51bf 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 81, 191, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wallet-info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .wallet-info.connected {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+        }
+
+        .audit-list {
+            grid-column: 1 / -1;
+        }
+
+        .audit-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .audit-item:hover {
+            background: #f1f5f9;
+        }
+
+        .compliance-type {
+            font-weight: 600;
+            color: #4c51bf;
+        }
+
+        .audit-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .status-expired {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #4c51bf;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .network-info {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .audit-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Privacy Compliance Audit Platform</h1>
+            <p>Secure compliance auditing with fully homomorphic encryption</p>
+        </div>
+
+        <div class="network-info">
+            <span id="networkStatus">Connecting to Ethereum Sepolia Testnet...</span>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>Wallet Connection</h2>
+                <div class="wallet-info" id="walletInfo">
+                    <div id="walletStatus">Connect your wallet to get started</div>
+                </div>
+                <button class="btn" id="connectWallet">Connect Wallet</button>
+            </div>
+
+            <div class="card">
+                <h2>Request Audit</h2>
+                <form id="auditForm">
+                    <div class="form-group">
+                        <label for="complianceType">Compliance Type</label>
+                        <select id="complianceType" required>
+                            <option value="">Select compliance type</option>
+                            <option value="0">GDPR - General Data Protection Regulation</option>
+                            <option value="1">CCPA - California Consumer Privacy Act</option>
+                            <option value="2">HIPAA - Health Insurance Portability</option>
+                            <option value="3">SOX - Sarbanes-Oxley Act</option>
+                            <option value="4">PCI DSS - Payment Card Industry</option>
+                            <option value="5">ISO 27001 - Information Security</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="expectedScore">Expected Compliance Score (0-100)</label>
+                        <input type="number" id="expectedScore" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataHash">Data Hash (Optional)</label>
+                        <input type="text" id="dataHash" placeholder="0x...">
+                    </div>
+                    <button type="submit" class="btn" id="submitAudit">
+                        <span id="submitText">Request Audit</span>
+                        <span id="submitLoader" class="loading" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="card audit-list">
+                <h2>My Audits</h2>
+                <div id="auditsList">
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">
+                        Connect your wallet to view audits
+                    </p>
+                </div>
+                <button class="btn" id="refreshAudits" style="margin-top: 20px;">Refresh Audits</button>
+            </div>
+        </div>
+
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        const CONTRACT_ADDRESS = '0x4B7B49F2DB9A1E02F361964773aE9285E520a690';
+        const SEPOLIA_CHAIN_ID = '0xaa36a7';
+
+        const CONTRACT_ABI = [
+            "function requestAudit(uint8 _complianceType, uint32 _expectedScore, bytes32 _dataHash) external returns (uint32 auditId)",
+            "function getEntityAudits(address _entity) external view returns (uint32[] memory)",
+            "function getAuditInfo(uint32 _auditId) external view returns (address auditedEntity, uint8 complianceType, uint256 auditTimestamp, bool auditCompleted, bytes32 reportHash, uint256 validUntil, bool isValid)",
+            "function getTotalAudits() external view returns (uint32)",
+            "event AuditRequested(uint32 indexed auditId, address indexed requestor, uint8 complianceType)",
+            "event AuditCompleted(uint32 indexed auditId, address indexed auditedEntity, uint8 complianceType)"
+        ];
+
+        const COMPLIANCE_TYPES = [
+            'GDPR', 'CCPA', 'HIPAA', 'SOX', 'PCI DSS', 'ISO 27001'
+        ];
+
+        let provider = null;
+        let signer = null;
+        let contract = null;
+        let userAccount = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+            document.getElementById('auditForm').addEventListener('submit', handleAuditSubmit);
+            document.getElementById('refreshAudits').addEventListener('click', loadUserAudits);
+        }
+
+        async function initializeApp() {
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    provider = new ethers.BrowserProvider(window.ethereum);
+
+                    // Check if already connected
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_accounts'
+                    });
+
+                    if (accounts.length > 0) {
+                        await connectWallet();
+                    }
+
+                    updateNetworkStatus();
+                } else {
+                    showMessage('Please install MetaMask to use this application', 'error');
+                }
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showMessage('Failed to initialize application', 'error');
+            }
+        }
+
+        async function connectWallet() {
+            try {
+                if (!provider) {
+                    showMessage('Please install MetaMask', 'error');
+                    return;
+                }
+
+                // Request account access
+                await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                signer = await provider.getSigner();
+                userAccount = await signer.getAddress();
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+                // Switch to Sepolia if needed
+                await switchToSepolia();
+
+                updateWalletUI();
+                await loadUserAudits();
+
+                showMessage('Wallet connected successfully', 'success');
+            } catch (error) {
+                console.error('Connection error:', error);
+                showMessage('Failed to connect wallet: ' + error.message, 'error');
+            }
+        }
+
+        async function switchToSepolia() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: SEPOLIA_CHAIN_ID }],
+                });
+            } catch (switchError) {
+                // Chain doesn't exist, add it
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: SEPOLIA_CHAIN_ID,
+                                chainName: 'Sepolia Testnet',
+                                nativeCurrency: {
+                                    name: 'SepoliaETH',
+                                    symbol: 'SEP',
+                                    decimals: 18
+                                },
+                                rpcUrls: ['https://rpc.sepolia.org'],
+                                blockExplorerUrls: ['https://sepolia.etherscan.io']
+                            }]
+                        });
+                    } catch (addError) {
+                        throw new Error('Failed to add Sepolia network');
+                    }
+                } else {
+                    throw switchError;
+                }
+            }
+        }
+
+        function updateWalletUI() {
+            const walletInfo = document.getElementById('walletInfo');
+            const walletStatus = document.getElementById('walletStatus');
+            const connectBtn = document.getElementById('connectWallet');
+
+            if (userAccount) {
+                walletInfo.classList.add('connected');
+                walletStatus.innerHTML = `
+                    <strong>Connected:</strong><br>
+                    ${userAccount.substring(0, 6)}...${userAccount.substring(38)}
+                `;
+                connectBtn.textContent = 'Connected';
+                connectBtn.disabled = true;
+            } else {
+                walletInfo.classList.remove('connected');
+                walletStatus.textContent = 'Connect your wallet to get started';
+                connectBtn.textContent = 'Connect Wallet';
+                connectBtn.disabled = false;
+            }
+        }
+
+        function updateNetworkStatus() {
+            const networkStatus = document.getElementById('networkStatus');
+
+            if (window.ethereum) {
+                window.ethereum.request({ method: 'eth_chainId' })
+                    .then(chainId => {
+                        if (chainId === SEPOLIA_CHAIN_ID) {
+                            networkStatus.textContent = '✅ Connected to Sepolia Testnet';
+                        } else {
+                            networkStatus.textContent = '⚠️ Please switch to Sepolia Testnet';
+                        }
+                    })
+                    .catch(() => {
+                        networkStatus.textContent = '❌ Network detection failed';
+                    });
+            }
+        }
+
+        async function handleAuditSubmit(event) {
+            event.preventDefault();
+
+            if (!contract || !userAccount) {
+                showMessage('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const formData = new FormData(event.target);
+            const complianceType = document.getElementById('complianceType').value;
+            const expectedScore = document.getElementById('expectedScore').value;
+            const dataHash = document.getElementById('dataHash').value || '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+            if (!complianceType || !expectedScore) {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitAudit');
+            const submitText = document.getElementById('submitText');
+            const submitLoader = document.getElementById('submitLoader');
+
+            try {
+                // Show loading state
+                submitText.style.display = 'none';
+                submitLoader.style.display = 'inline-block';
+                submitBtn.disabled = true;
+
+                const tx = await contract.requestAudit(
+                    parseInt(complianceType),
+                    parseInt(expectedScore),
+                    dataHash
+                );
+
+                showMessage('Transaction submitted. Waiting for confirmation...', 'success');
+
+                const receipt = await tx.wait();
+
+                showMessage('Audit request submitted successfully!', 'success');
+
+                // Reset form
+                event.target.reset();
+
+                // Refresh audit list
+                await loadUserAudits();
+
+            } catch (error) {
+                console.error('Submit error:', error);
+                showMessage('Failed to submit audit request: ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                submitText.style.display = 'inline';
+                submitLoader.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function loadUserAudits() {
+            if (!contract || !userAccount) return;
+
+            const auditsList = document.getElementById('auditsList');
+
+            try {
+                auditsList.innerHTML = '<p style="text-align: center; color: #6b7280;">Loading audits...</p>';
+
+                const auditIds = await contract.getEntityAudits(userAccount);
+
+                if (auditIds.length === 0) {
+                    auditsList.innerHTML = '<p style="text-align: center; color: #6b7280;">No audits found</p>';
+                    return;
+                }
+
+                let auditsHtml = '';
+
+                for (let i = auditIds.length - 1; i >= 0; i--) {
+                    const auditId = auditIds[i];
+                    try {
+                        const auditInfo = await contract.getAuditInfo(auditId);
+                        const [auditedEntity, complianceType, auditTimestamp, auditCompleted, reportHash, validUntil, isValid] = auditInfo;
+
+                        const date = new Date(Number(auditTimestamp) * 1000).toLocaleDateString();
+                        const complianceTypeName = COMPLIANCE_TYPES[complianceType] || 'Unknown';
+
+                        let statusClass = 'status-pending';
+                        let statusText = 'Pending';
+
+                        if (auditCompleted) {
+                            if (isValid) {
+                                statusClass = 'status-completed';
+                                statusText = 'Completed';
+                            } else {
+                                statusClass = 'status-expired';
+                                statusText = 'Expired';
+                            }
+                        }
+
+                        auditsHtml += `
+                            <div class="audit-item">
+                                <div>
+                                    <div class="compliance-type">${complianceTypeName}</div>
+                                    <div style="font-size: 14px; color: #6b7280;">ID: ${auditId}</div>
+                                </div>
+                                <div>${date}</div>
+                                <div>
+                                    <span class="audit-status ${statusClass}">${statusText}</span>
+                                </div>
+                                <div style="font-size: 14px; color: #6b7280;">
+                                    ${isValid ? 'Valid' : 'Invalid'}
+                                </div>
+                                <div>
+                                    <button class="btn" style="width: auto; padding: 8px 16px; font-size: 14px;"
+                                            onclick="viewAuditDetails(${auditId})">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } catch (error) {
+                        console.error(`Error loading audit ${auditId}:`, error);
+                    }
+                }
+
+                auditsList.innerHTML = auditsHtml || '<p style="text-align: center; color: #6b7280;">Failed to load audits</p>';
+
+            } catch (error) {
+                console.error('Load audits error:', error);
+                auditsList.innerHTML = '<p style="text-align: center; color: #ef4444;">Failed to load audits</p>';
+            }
+        }
+
+        function viewAuditDetails(auditId) {
+            showMessage(`Audit ID ${auditId}: Detailed view functionality would be implemented here`, 'success');
+        }
+
+        function showMessage(text, type) {
+            const messages = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+
+            messages.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Listen for account changes
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                if (accounts.length === 0) {
+                    userAccount = null;
+                    contract = null;
+                    signer = null;
+                    updateWalletUI();
+                    document.getElementById('auditsList').innerHTML = '<p style="text-align: center; color: #6b7280;">Connect your wallet to view audits</p>';
+                } else {
+                    connectWallet();
+                }
+            });
+
+            window.ethereum.on('chainChanged', function (chainId) {
+                updateNetworkStatus();
+            });
+        }
+    </script>
+</body>
+</html>
