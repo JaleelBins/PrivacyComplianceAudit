@@ -14,9 +14,9 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
             min-height: 100vh;
-            color: #333;
+            color: #e2e8f0;
         }
 
         .container {
@@ -50,10 +50,11 @@
         }
 
         .card {
-            background: white;
+            background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             transition: transform 0.3s ease;
         }
 
@@ -62,7 +63,7 @@
         }
 
         .card h2 {
-            color: #4c51bf;
+            color: #60a5fa;
             margin-bottom: 20px;
             font-size: 1.5rem;
         }
@@ -75,14 +76,16 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #374151;
+            color: #cbd5e1;
         }
 
         .form-group select,
         .form-group input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e5e7eb;
+            border: 2px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
             border-radius: 10px;
             font-size: 16px;
             transition: border-color 0.3s ease;
@@ -91,11 +94,11 @@
         .form-group select:focus,
         .form-group input:focus {
             outline: none;
-            border-color: #4c51bf;
+            border-color: #3b82f6;
         }
 
         .btn {
-            background: linear-gradient(135deg, #4c51bf 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -109,7 +112,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(76, 81, 191, 0.3);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.5);
         }
 
         .btn:disabled {
@@ -119,14 +122,15 @@
         }
 
         .wallet-info {
-            background: #f3f4f6;
+            background: #0f172a;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
+            border: 1px solid #475569;
         }
 
         .wallet-info.connected {
-            background: #d1fae5;
+            background: rgba(16, 185, 129, 0.1);
             border: 2px solid #10b981;
         }
 
@@ -135,8 +139,8 @@
         }
 
         .audit-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #475569;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 15px;
@@ -147,12 +151,13 @@
         }
 
         .audit-item:hover {
-            background: #f1f5f9;
+            background: rgba(51, 65, 85, 0.6);
+            border-color: #60a5fa;
         }
 
         .compliance-type {
             font-weight: 600;
-            color: #4c51bf;
+            color: #60a5fa;
         }
 
         .audit-status {
@@ -182,8 +187,8 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #4c51bf;
+            border: 2px solid #475569;
+            border-top: 2px solid #3b82f6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
